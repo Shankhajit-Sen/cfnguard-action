@@ -1,0 +1,43 @@
+let dynamodb_resource = Resources.*[
+	Type == "AWS::DynamoDB::Table"
+]
+
+rule check_dynamodb_pointintimerecovery when %dynamodb_resource !empty {
+	%dynamodb_resource {
+		Properties {
+			PointInTimeRecoverySpecification exists <<DynamoDB Table does not have PointInTimeRecoverySpecification configured (i.e. disabled).>>
+			when PointInTimeRecoverySpecification exists {
+				PointInTimeRecoverySpecification {
+					PointInTimeRecoveryEnabled exists <<PointInTimeRecoveryEnabled is not set.>>
+					when PointInTimeRecoveryEnabled exists {
+						PointInTimeRecoveryEnabled == "True" <<DynamoDB Table has Point In Time Recovery disabled.>>
+					}
+				}
+			}
+		}
+	}
+}
+
+rule check_dynamodb_deletion_protection when %dynamodb_resource !empty {
+    %dynamodb_resource.Properties.DeletionProtectionEnabled == "True"
+    <<
+    Violation: Dynamodb table deletion protection should be enabled.
+    Fix: Set the DeletionProtectionEnabled to 'True'.
+    >>
+}
+
+rule dynamodb_server_side_encryption when %dynamodb_resource !empty {
+	%dynamodb_resource.Properties.SSESpecification.SSEEnabled == "True"
+	<<
+	Violation: Dynamodb table not having server-side-encryption enabled
+	Fix: Set the SSEEnabled to 'True'.
+	>>
+}
+
+rule dynamodb_auto_scaling when %dynamodb_resource !empty {
+    %dynamodb_resource.Properties.BillingMode == "PAY_PER_REQUEST"
+	<<
+	Violation: DynamoDB table not having auto scaling configured
+	Fix: Set the BillingMode to 'PAY_PER_REQUEST'.
+	>>
+}
