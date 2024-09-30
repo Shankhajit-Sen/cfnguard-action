@@ -1,11 +1,8 @@
-name: 'cfn-guard-scan-action'
-description: 'A composite action to run CFN-Guard scan and annotate results'
+name: "cfn-guard-scan-action"
+description: "A composite action to run CFN-Guard scan and annotate results"
 inputs:
-  rules:
-    description: 'Path to the Guard rule files'
-    required: true
   data:
-    description: 'Path to the CloudFormation templates'
+    description: "Path to the CloudFormation templates"
     required: true
 permissions:
   pull-requests: write
@@ -13,13 +10,13 @@ permissions:
   actions: read
   contents: read
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Validate cloudformation against the guard rules
       id: validate
       uses: aws-cloudformation/cloudformation-guard@action-v0.0.5
       with:
-        rules: ${{ inputs.rules }}
+        rules: "./rules"
         data: ${{ inputs.data }}
         checkout: false
         create-review: true
