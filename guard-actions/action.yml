@@ -16,7 +16,7 @@ runs:
       id: validate
       uses: aws-cloudformation/cloudformation-guard@action-v0.0.5
       with:
-        rules: "./rules"
+        rules: "${{ github.workspace }}/cfnguard-action/rules/*.guard"  # Wildcard to include all .guard files
         data: ${{ inputs.data }}
         checkout: false
         create-review: true
