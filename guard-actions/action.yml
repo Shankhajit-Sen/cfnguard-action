@@ -12,11 +12,22 @@ permissions:
 runs:
   using: "composite"
   steps:
-    - name: Validate cloudformation against the guard rules
+    - name: Resolve all .guard files in rules folder
+      id: resolve_rules
+      run: |
+        RULE_FILES=$(find ${{ github.workspace }}/cfnguard-action/rules -type f -name '*.guard' | tr '\n' ' ')
+        if [[ -z "$RULE_FILES" ]]; then
+          echo "No .guard files found in the rules folder."
+          exit 1
+        fi
+        echo "::set-output name=rules::$RULE_FILES"
+      shell: bash
+
+    - name: Validate CloudFormation against the guard rules
       id: validate
       uses: aws-cloudformation/cloudformation-guard@action-v0.0.5
       with:
-        rules: "${{ github.workspace }}/cfnguard-action/rules/*.guard"  # Wildcard to include all .guard files
+        rules: ${{ steps.resolve_rules.outputs.rules }}
         data: ${{ inputs.data }}
         checkout: false
         create-review: true
