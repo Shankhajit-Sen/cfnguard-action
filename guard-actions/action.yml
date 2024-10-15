@@ -12,26 +12,23 @@ permissions:
 runs:
   using: "composite"
   steps:
-    - name: Check out the repository
-      uses: actions/checkout@v3
-
     - name: List files in the rules folder for debugging
       run: |
-        echo "Listing files in ./rules folder for debugging:"
-        ls -al  ${{ github.workspace }}
+        echo "Listing files in the rules folder:"
+        ls -al "${{ github.workspace }}/cfnguard-action/rules"
       shell: bash
 
     - name: Validate CloudFormation against the guard rules
       id: validate
       uses: aws-cloudformation/cloudformation-guard@action-v0.0.5
       with:
-        rules: "./cfnguard-action/rules" # Hardcoded path to the rules folder
+        rules: "${{ github.workspace }}/cfnguard-action/rules" # Use the full path to rules
         data: ${{ inputs.data }}
         checkout: false
         create-review: true
         debug: true
 
-    - name: Convert CFN-Guard results to SARIF
+    - name: Convert cfn-guard results to SARIF
       if: ${{ failure() && steps.validate.conclusion == 'failure' }}
       run: |
         mkdir -p results
