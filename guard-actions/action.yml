@@ -14,30 +14,30 @@ runs:
   steps:
     - name: Check out the repository
       uses: actions/checkout@v4
-    
+
     - name: List files in the rules folder for debugging
       run: |
         echo "Listing files in ./rules folder for debugging:"
-        ls -al
+        ls -al cfnguard-action
       shell: bash
-    
+
     - name: Validate CloudFormation against the guard rules
       id: validate
       uses: aws-cloudformation/cloudformation-guard@action-v0.0.5
       with:
-        rules: './rules'  # Hardcoded path to the rules folder
+        rules: "./cfnguard-action/rules" # Hardcoded path to the rules folder
         data: ${{ inputs.data }}
         checkout: false
         create-review: true
         debug: true
-    
+
     - name: Convert CFN-Guard results to SARIF
       if: ${{ failure() && steps.validate.conclusion == 'failure' }}
       run: |
         mkdir -p results
         echo '${{ steps.validate.outputs.result }}' > results/cfn-guard-results.sarif
       shell: bash
-    
+
     - name: Annotate SARIF results
       if: ${{ failure() && steps.validate.conclusion == 'failure' }}
       uses: SirYwell/sarif-annotator@v0.2.1
