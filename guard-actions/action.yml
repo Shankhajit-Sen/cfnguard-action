@@ -19,6 +19,7 @@ runs:
       run: |
         echo "Listing files in ./rules folder for debugging:"
         ls -al ./rules
+      shell: bash
     
     - name: Validate CloudFormation against the guard rules
       id: validate
