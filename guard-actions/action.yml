@@ -18,7 +18,7 @@ runs:
     - name: List files in the rules folder for debugging
       run: |
         echo "Listing files in ./rules folder for debugging:"
-        ls -al  ${{ github.workspace }}/cfnguard-action
+        ls -al  ${{ github.workspace }}
       shell: bash
 
     - name: Validate CloudFormation against the guard rules
