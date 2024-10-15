@@ -4,6 +4,11 @@ inputs:
   data:
     description: "Path to the CloudFormation templates"
     required: true
+permissions:
+  pull-requests: write
+  security-events: write
+  actions: read
+  contents: read
 runs:
   using: "composite"
   steps:
