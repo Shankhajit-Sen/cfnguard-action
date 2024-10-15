@@ -15,14 +15,14 @@ runs:
     - name: List files in the rules folder for debugging
       run: |
         echo "Listing files in the rules folder:"
-        ls -al "${{ github.workspace }}/cfnguard-action/rules"
+        ls -al "cfnguard-action/rules"
       shell: bash
 
     - name: Validate CloudFormation against the guard rules
       id: validate
       uses: aws-cloudformation/cloudformation-guard@action-v0.0.5
       with:
-        rules: "${{ github.workspace }}/cfnguard-action/rules" # Use the full path to rules
+        rules: "cfnguard-action/rules" # Use the full path to rules
         data: ${{ inputs.data }}
         checkout: false
         create-review: true
