@@ -1,6 +1,9 @@
 name: "cfn-guard-scan-action"
 description: "A composite action to run CFN-Guard scan and annotate results"
 inputs:
+  rules:
+    description: 'Path to the Guard rule files'
+    required: true
   data:
     description: "Path to the CloudFormation templates"
     required: true
@@ -22,7 +25,7 @@ runs:
       id: validate
       uses: aws-cloudformation/cloudformation-guard@action-v0.0.5
       with:
-        rules: "cfnguard-action/rules" # Use the full path to rules
+        rules: ${{ inputs.rules }}
         data: ${{ inputs.data }}
         checkout: false
         create-review: true
