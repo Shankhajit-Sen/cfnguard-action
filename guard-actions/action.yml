@@ -28,6 +28,8 @@ runs:
       run: |
         mkdir -p results
         echo '${{ steps.validate.outputs.result }}' > results/cfn-guard-results.sarif
+        echo "Printing SARIF results:"
+        cat results/cfn-guard-results.sarif
       shell: bash
     - name: Annotate SARIF results
       if: ${{ failure() && steps.validate.conclusion == 'failure' }}
