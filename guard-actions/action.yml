@@ -19,7 +19,7 @@ runs:
       id: validate
       uses: aws-cloudformation/cloudformation-guard@action-v0.0.5
       with:
-        rules: ${{ github.action_path }}/rules
+        rules: ${{ github.action_path }}/rules/*.guard
         data: ${{ inputs.templates_folder }}
         checkout: false
         create-review: true
