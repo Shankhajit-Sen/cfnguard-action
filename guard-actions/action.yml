@@ -27,21 +27,3 @@ runs:
         checkout: false
         create-review: true
         debug: true
-
-    - name: Convert cfn-guard results to SARIF
-      if: ${{ failure() && steps.validate.conclusion == 'failure' }}
-      run: |
-        mkdir -p results
-        echo "${{ steps.validate.outputs.result }}" | jq '.runs[].results[].locations[].physicalLocation.artifactLocation.uri |= sub("^templates/"; "./")' > cfn-guard-results.sarif
-        echo "Printing SARIF results:"
-        cat results/cfn-guard-results.sarif
-      shell: bash
-
-    - name: Annotate SARIF results
-      if: ${{ failure() && steps.validate.conclusion == 'failure' }}
-      uses: SirYwell/sarif-annotator@v0.2.1
-      with:
-        report-path: results/cfn-guard-results.sarif
-        source: qodana
-      env:
-        DEBUG: sarif-annotator
