@@ -32,7 +32,7 @@ runs:
       if: ${{ failure() && steps.validate.conclusion == 'failure' }}
       run: |
         mkdir -p results
-        echo '${{ steps.validate.outputs.result }}' | jq '.runs[].results[].locations[].physicalLocation.artifactLocation.uri |= sub("^templates/"; "./templates/")' > cfn-guard-results.sarif
+        echo "${{ steps.validate.outputs.result }}" | jq '.runs[].results[].locations[].physicalLocation.artifactLocation.uri |= sub("^templates/"; "./")' > cfn-guard-results.sarif
         echo "Printing SARIF results:"
         cat results/cfn-guard-results.sarif
       shell: bash
