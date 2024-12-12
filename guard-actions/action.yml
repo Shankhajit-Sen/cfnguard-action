@@ -1,28 +1,33 @@
-name: 'cfn-guard-scan-action'
-description: 'A composite action to run CFN-Guard scan and annotate results'
+name: "cfn-guard-scan-action"
+description: "A composite action to run CFN-Guard scan and annotate results"
 inputs:
-  templates_folder:
-    description: 'Path to the CloudFormation templates'
-    required: false
-    default: './templates'
+  data:
+    description: "Path to the CloudFormation templates"
+    required: true
 permissions:
   pull-requests: write
   security-events: write
   actions: read
   contents: read
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-    - name: Validate cloudformation against the guard rules
+    - name: List files in the rules folder for debugging
+      run: |
+        echo "Listing files in the rules folder:"
+        ls -al "cfnguard-action/rules"
+      shell: bash
+
+    - name: Validate CloudFormation against the guard rules
       id: validate
       uses: aws-cloudformation/cloudformation-guard@action-v0.0.5
       with:
-        rules: ${{ github.workspace }}/cfnguard-action/rules/dynamodb-rules.guard
-        data: ${{ inputs.templates_folder }}
+        rules: "cfnguard-action/rules"
+        data: ${{ inputs.data }}
         checkout: false
         create-review: true
+        debug: true
+
     - name: Convert cfn-guard results to SARIF
       if: ${{ failure() && steps.validate.conclusion == 'failure' }}
       run: |
@@ -31,6 +36,7 @@ runs:
         echo "Printing SARIF results:"
         cat results/cfn-guard-results.sarif
       shell: bash
+
     - name: Annotate SARIF results
       if: ${{ failure() && steps.validate.conclusion == 'failure' }}
       uses: SirYwell/sarif-annotator@v0.2.1
