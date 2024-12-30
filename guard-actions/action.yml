@@ -44,8 +44,7 @@ runs:
       run: |
         echo "=== Debugging outputs from the 'validate' step ==="
         echo "Output: outputs"
-        echo "${{ steps.validate }}" > result.json
-        cat result.json | jq -r '. | tojson'
+        echo "${{ toJSON(steps.validate) }}"
         echo ""
         echo "Output: result"
         echo "${{ steps.validate.outputs.result }}"
