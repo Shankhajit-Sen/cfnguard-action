@@ -33,7 +33,7 @@ runs:
         echo "Creating 'results' directory..."
         mkdir -p results
         echo "Writing cfn-guard results to SARIF file..."
-        echo '${{ steps.validate.outputs.result }}' > results/cfn-guard-results.sarif
+        echo '${{ steps.validate.outputs.report }}' > results/cfn-guard-results.sarif
         echo "SARIF file created. Displaying file details:"
         ls -lh results/
         echo "Displaying SARIF file content:"
