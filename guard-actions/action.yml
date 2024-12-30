@@ -27,3 +27,33 @@ runs:
         checkout: false
         create-review: true
         debug: true
+    - name: Convert cfn-guard results to SARIF
+      if: ${{ failure() && steps.validate.conclusion == 'failure' }}
+      run: |
+        echo "Creating 'results' directory..."
+        mkdir -p results
+        echo "Writing cfn-guard results to SARIF file..."
+        echo '${{ steps.validate.outputs.result }}' > results/cfn-guard-results.sarif
+        echo "SARIF file created. Displaying file details:"
+        ls -lh results/
+        echo "Displaying SARIF file content:"
+        cat results/cfn-guard-results.sarif
+      shell: bash
+
+    - name: Annotate SARIF results
+      if: ${{ failure() && steps.validate.conclusion == 'failure' }}
+      uses: SirYwell/sarif-annotator@v0.2.1
+      with:
+        report-path: results/cfn-guard-results.sarif
+        source: qodana
+      env:
+        DEBUG: "true"
+
+    # Additional debugging: Validate commenting behavior
+    - name: Debug SARIF Annotation
+      if: ${{ failure() && steps.validate.conclusion == 'failure' }}
+      run: |
+        echo "Checking if the SARIF annotator processed the results correctly."
+        echo "Ensure annotations were added based on the SARIF file."
+        echo "GitHub action output and logs will confirm if annotations worked."
+      shell: bash
