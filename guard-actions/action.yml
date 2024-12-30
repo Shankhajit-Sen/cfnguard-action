@@ -43,8 +43,8 @@ runs:
       if: ${{ failure() && steps.validate.conclusion == 'failure' }}
       run: |
         echo "=== Debugging outputs from the 'validate' step ==="
-        echo "Output: validate"
-        echo "${{ steps.validate }}"
+        echo "Output: outputs"
+        echo "${{ toJSON(steps.validate) }}"
         echo ""
         echo "Output: result"
         echo "${{ steps.validate.outputs.result }}"
