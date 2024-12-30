@@ -33,12 +33,28 @@ runs:
         echo "Creating 'results' directory..."
         mkdir -p results
         echo "Writing cfn-guard results to SARIF file..."
-        echo '${{ steps.validate.outputs.report }}' > results/cfn-guard-results.sarif
+        echo '${{ steps.validate.outputs.result }}' > results/cfn-guard-results.sarif
         echo "SARIF file created. Displaying file details:"
         ls -lh results/
         echo "Displaying SARIF file content:"
         cat results/cfn-guard-results.sarif
       shell: bash
+    - name: Debug Validation Outputs
+      if: ${{ failure() && steps.validate.conclusion == 'failure' }}
+      run: |
+        echo "=== Debugging outputs from the 'validate' step ==="
+        echo "Output: validate"
+        echo "${{ steps.validate }}"
+        echo ""
+        echo "Output: result"
+        echo "${{ steps.validate.outputs.result }}"
+        echo ""
+        echo "Output: report"
+        echo "${{ steps.validate.outputs.report }}"
+        echo ""
+        echo "All outputs (JSON):"
+        echo '${{ toJSON(steps.validate.outputs) }}'
+        shell: bash
 
     - name: Annotate SARIF results
       if: ${{ failure() && steps.validate.conclusion == 'failure' }}
