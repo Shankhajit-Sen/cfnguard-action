@@ -54,7 +54,7 @@ runs:
         echo ""
         echo "All outputs (JSON):"
         echo '${{ toJSON(steps.validate.outputs) }}'
-        shell: bash
+      shell: bash
 
     - name: Annotate SARIF results
       if: ${{ failure() && steps.validate.conclusion == 'failure' }}
