@@ -53,7 +53,7 @@ runs:
         echo "${{ steps.validate.outputs.report }}"
         echo ""
         echo "All outputs (JSON):"
-        echo '${{ toJSON(steps.validate.outputs) }}'
+        echo '${{ steps.validate.outputs }}'
       shell: bash
 
     - name: Annotate SARIF results
